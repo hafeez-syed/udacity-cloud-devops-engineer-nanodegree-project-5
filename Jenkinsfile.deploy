@@ -1,0 +1,95 @@
+@Library('mofo')
+
+import com.mofo.NotificationHelpers;
+import com.mofo.ParsePackage;
+import com.mofo.AwsHelpers;
+
+def AGENT_TYPE = libraryResource 'com/mofo/agent-type-node'
+
+def NotificationHelpers = new com.mofo.NotificationHelpers();
+def ParsePackage = new com.mofo.ParsePackage();
+def AwsHelpers = new com.mofo.AwsHelpers();
+
+def packageVersion
+def packageName = "udacity-capstone"
+def previousBuild = currentBuild.getPreviousBuild()
+def bucketName = "${STACK}-udacity-capstone-${REGION}"
+def outputs = ''
+
+properties([
+    parameters([
+        string(defaultValue: 'master', name: 'BRANCH_NAME', description: 'Gitlab branch to build from'),
+        string(defaultValue: 'Dev', name: 'ENVIRONMENT', description: 'Account type, example: Dev'),
+        string(defaultValue: 'dev-master', name: 'STACK', description: 'Stack name, example: dev-master'),
+        string(defaultValue: 'ap-southeast-2', name: 'REGION', description: 'Example: ap-southeast-2'),
+        string(name: 'CERTIFICATE_ARN', description: 'Certificate ARN for the stack env', defaultValue: 'arn:aws:acm:us-east-1:763226548626:certificate/719cb8a2-75e2-440b-a53f-01bd92781ff3'),
+        string(name: 'ORIGIN_REQUEST_MODIFIER_LAMBDA_ARN', description: 'Lambda function to modify origin request for static website S3 bucket', defaultValue: 'arn:aws:lambda:us-east-1:763226548626:function:static-site-origin-request-modifier:1'),
+        string(name: 'HOSTED_ZONE_ID', description: 'Hosted zone ID', defaultValue: 'Z3ICCZLFAH2AYD')
+    ])
+])
+
+try {
+
+  node(AGENT_TYPE) {
+
+    stage('Checkout') {
+      checkout scm
+
+      packageVersion = ParsePackage.getVersion()
+    }
+
+    stage('Install') {
+      sh "rm -rf node_modules || true"
+      sh "node -v"
+      sh "npm ci"
+    }
+
+    stage('Lint') {
+      sh "npm run lint"
+    }
+
+    stage('Build Storybook') {
+      sh 'npm run build:storybook'
+    }
+
+    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: "jenkins${ENVIRONMENT}", secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+      withAWS(region: "${REGION}") {
+
+         stage("Create React components S3 Bucket") {
+          dir('infrastructure') {
+            cfnValidate(file: "cloudfront.json")
+            outputs = cfnUpdate(
+              stack: "react-components-s3-cf-${STACK}",
+              file: 'cloudfront.json',
+              params:[
+                "Stack=${STACK}",
+                "Environment=${ENVIRONMENT}",
+                "CertificateArn=${CERTIFICATE_ARN}",
+                "bucketName=${bucketName}",
+                "OriginRequestModifierLambdaArn=${ORIGIN_REQUEST_MODIFIER_LAMBDA_ARN}",
+                "HostedZoneId=${HOSTED_ZONE_ID}" ],
+              keepParams:[],
+              timeoutInMinutes:100,
+              tags: AwsHelpers.getAWSTags("${environment}", 'frontend', 'Frontend Team', 'Robbie Tutt', 'ecommerce', 'helium'),
+              pollInterval:1000)
+          }
+        }
+
+        stage("Upload storybook artefact") {
+          s3Upload(file: "storybook-static", bucket: "${bucketName}")
+        }
+      }
+    }
+
+    currentBuild.description = "Deployed ${packageVersion}"
+  }
+
+  if (previousBuild && previousBuild.result != 'SUCCESS') {
+    NotificationHelpers.sendSuccessMessage(packageName)
+  }
+
+} catch (e) {
+  NotificationHelpers.sendFailureMessage(packageName)
+
+  throw e
+}

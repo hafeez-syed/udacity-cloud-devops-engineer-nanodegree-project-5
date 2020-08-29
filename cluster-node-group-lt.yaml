@@ -1,0 +1,12 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: udacity-capstone-project
+  region: ap-southeast-2
+  version: '1.17'  
+managedNodeGroups:
+- name: node-group-lt
+  launchTemplate:
+    id: lt-0d0e85529c0a12742
+    version: "1"
