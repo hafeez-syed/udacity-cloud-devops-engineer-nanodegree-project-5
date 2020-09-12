@@ -33,9 +33,6 @@ spec:
       labels:
         app: udacity-capstone-project
         version: v1.0.0
-      #annotations:
-        #prometheus.io/scrape: "true"
-        #prometheus.io/port: "9101"
     spec:
       containers:
       - name: blue
