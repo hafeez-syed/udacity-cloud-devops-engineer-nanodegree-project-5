@@ -8,6 +8,6 @@ RUN npm install
 
 COPY . /app
 
-CMD ["node", "green.js"]
+CMD ["node", "index.js"]
 
 EXPOSE 4000
