@@ -1,0 +1,19 @@
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.container {
+    margin: 0 25%;
+    padding: 20px;
+    width: 100%;
+}
+
+.heading-blue {
+    color: #2396ED;
+}
+
+img {
+    width: 50%;
+}

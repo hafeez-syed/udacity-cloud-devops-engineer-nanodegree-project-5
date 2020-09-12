@@ -13,3 +13,16 @@ $ eksctl create cluster --config-file cluster-node-group-lt.yaml
 ```
 $ eksctl delete cluster --region=ap-southeast-2 --name=udacity-capstone-project
 ```
+
+## Docker
+```bash
+$ docker build -t capstone-docker-image .
+```
+
+```bash
+$ docker run -d -p 3000:3000 --name capstone-docker-container capstone-docker-image
+```
+
+```bash
+$ docker exec -it capstone-docker-container /bin/sh
+```

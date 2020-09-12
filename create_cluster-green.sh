@@ -1,12 +1,13 @@
 #!/bin/bash
 
 eksctl create cluster \
---name udacity-capstone-project-green \
+--name udacity-capstone-project \
 --version 1.17 \
 --region ap-southeast-2 \
---nodegroup-name ud-cap-node \
---node-type t3.micro \
---nodes 1 \
+--nodegroup-name udacity-capstone-node-green \
+--node-type t2.micro \
+--nodes 2 \
 --nodes-min 1 \
---nodes-max 1 \
---ssh-access
+--nodes-max 2 \
+--ssh-access \
+--managed

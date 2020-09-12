@@ -1,0 +1,21 @@
+{
+  "name": "udacity-capstone-project-green-app",
+  "version": "1.0.0",
+  "description": "Udacity Capstone Project - Green Application",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5.git"
+  },
+  "author": "Hafeez Syed",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5/issues"
+  },
+  "homepage": "https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
