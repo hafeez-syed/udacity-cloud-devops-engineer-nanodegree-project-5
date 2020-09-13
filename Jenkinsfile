@@ -15,7 +15,7 @@ pipeline {
 						sh 'cd green-app/ && npm run lint'
 					}
 				}
-				stage('Lint HTML files) {
+				stage('Lint HTML files') {
 					steps {
 						sh 'tidy -q -e blue-app/public/*.html'
 						sh 'tidy -q -e green-app/public/*.html'
