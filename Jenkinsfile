@@ -4,17 +4,17 @@ pipeline {
 	tools { nodejs "NodeJS"	}
 
 	stages {
-		/**
 		stage("Install node packages") {
 			steps {
-				sh " --- Installing Node Packages --- "
-				sh "node --version"
-				sh "npm --version"
-				sh "cd blue-app/ && npm install"
-				sh "cd green-app/ && npm install"
+				sh ' --- Installing Node Packages --- '
+				sh '''
+					node --version
+					npm --version
+					cd blue-app/ && npm install
+					cd green-app/ && npm install
+				'''
 			}
 		}
-		*/
 		stage("Lint static files") {
 			parallel {
 				stage("Lint Javascript files") {
