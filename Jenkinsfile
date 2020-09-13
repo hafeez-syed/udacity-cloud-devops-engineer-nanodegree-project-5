@@ -9,7 +9,7 @@ pipeline {
 		}
 		stage('Lint static files') {
 			parallel {
-				stage('Lint Javascript files) {
+				stage('Lint Javascript files') {
 					steps {
 						sh 'cd blue-app/ && npm run lint'
 						sh 'cd green-app/ && npm run lint'
