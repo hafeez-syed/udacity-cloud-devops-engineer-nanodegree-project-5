@@ -10,4 +10,4 @@ docker images
 
 # Step 3
 # Run docker app
-docker run -d -p 4000:4000 --name capstone-docker-container-green capstone-docker-image-green
+docker run -d -p 8080:80 --name capstone-docker-container-green capstone-docker-image-green

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue-green-lb
+  labels:
+    app: udacity-capstone-project
+spec:
+  type: LoadBalancer
+  selector:
+    app: green-deployment
+  ports:
+    - port: 80
+      targetPort: 3000

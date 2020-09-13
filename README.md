@@ -53,9 +53,12 @@ Send all your traffic from v1 `BLUE` to v2 `GREEN`
 $ kubectl patch service blue-service -p '{"spec":{"selector":{"version":"v2.0.0"}}}'
 ```
 
-
-
 If you want to switch back to v1 `BLUE`
 ```bash
 $ kubectl patch service blue-service -p '{"spec":{"selector":{"version":"v1.0.0"}}}'
+```
+
+Delete your deployment
+```bash
+$ kubectl delete all -l app=udacity-capstone-project
 ```
