@@ -7,16 +7,22 @@ pipeline {
 		stage("Install node packages") {
 			parallel {
 				stage("Get Node Information") {
-					sh '''
-						node --version
-						npm --version
-					'''
+					steps {
+						sh '''
+							node --version
+							npm --version
+						'''
+					}
 				}
 				stage("Install Blue Application packages") {
-					sh 'cd ./blue-app/ && npm install'
+					steps {
+						sh 'cd ./blue-app/ && npm install'
+					}
 				}
 				stage("Install Green Application packages") {
-					sh 'cd ./green-app/ && npm install'
+					steps {
+						sh 'cd ./green-app/ && npm install'
+					}
 				}
 			}
 		}
