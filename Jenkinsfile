@@ -30,14 +30,14 @@ pipeline {
 			parallel {
 				stage("Lint Javascript files") {
 					steps {
-						sh ' --- Running ESlint to check for Javascript Errors --- '
+						sh 'echo "--- Running ESlint to check for Javascript Errors ---"'
 						sh 'cd ./blue-app/ && npm run lint'
 						sh 'cd ./green-app/ && npm run lint'
 					}
 				}
 				stage("Lint HTML files") {
 					steps {
-						sh ' --- Running Tidy to Check for for Javascript Errors --- '
+						sh 'echo "--- Running Tidy to Check for for Javascript Errors ---"'
 						sh 'tidy -q -e ./blue-app/public/*.html'
 						sh 'tidy -q -e ./green-app/public/*.html'
 					}
