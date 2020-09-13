@@ -5,60 +5,59 @@ pipeline {
 
 	stages {
 		stage("Install node packages") {
-			steps {
-				sh '''
-					node --version
-					npm --version
-					cd ./blue-app/ && npm install
-					cd ./green-app/ && npm install
-				'''
+			parallel {
+				stage("Get Node Information") {
+					sh '''
+						node --version
+						npm --version
+					'''
+				}
+				stage("Install Blue Application packages") {
+					sh 'cd ./blue-app/ && npm install'
+				}
+				stage("Install Green Application packages") {
+					sh 'cd ./green-app/ && npm install'
+				}
 			}
 		}
 		stage("Lint static files") {
 			parallel {
 				stage("Lint Javascript files") {
 					steps {
-						sh " --- Running ESlint to check for Javascript Errors --- "
-						sh "cd ./blue-app/ && npm run lint"
-						sh "cd ./green-app/ && npm run lint"
+						sh ' --- Running ESlint to check for Javascript Errors --- '
+						sh 'cd ./blue-app/ && npm run lint'
+						sh 'cd ./green-app/ && npm run lint'
 					}
 				}
 				stage("Lint HTML files") {
 					steps {
-						sh " --- Running Tidy to Check for for Javascript Errors --- "
-						sh "tidy -q -e ./blue-app/public/*.html"
-						sh "tidy -q -e ./green-app/public/*.html"
+						sh ' --- Running Tidy to Check for for Javascript Errors --- '
+						sh 'tidy -q -e ./blue-app/public/*.html'
+						sh 'tidy -q -e ./green-app/public/*.html'
 					}
 				}
 			}
 		}
 		stage("Script Permissions") {
 			steps {
-				sh " --- Adding permission to execute the scripts --- "
-				sh ""
-				sh ""
-				sh ""
-				sh ""
+				sh ' --- Adding permission to execute the scripts --- '
 			}
 		}
 		stage("Docker") {
 			parallel {
 				stage("Build Docker Image") {
 					steps {
-						sh " ---- Building Docker Image --- "
-						sh ""
+						sh ' ---- Building Docker Image --- '
 					}
 				}
 				stage("Push Docker Image") {
 					steps {
-						sh " ---- Pushing Docker Image to the Repository --- "
-						sh ""
+						sh ' ---- Pushing Docker Image to the Repository --- '
 					}
 				}
 				stage("Removing Docker Image") {
 					steps {
-						sh " ---- Removing Docker Image --- "
-						sh ""
+						sh ' ---- Removing Docker Image --- '
 					}
 				}
 			}
@@ -67,34 +66,29 @@ pipeline {
 			parallel {
 				stage("Create K8s Cluster") {
 					steps {
-						sh " ---- Creating Kubernetes Cluster in AWS --- "
-						sh ""
+						sh ' ---- Creating Kubernetes Cluster in AWS --- '
 					}
 				}
 				stage("Update K8s Cluster Configuration") {
 					steps {
-						sh " ---- Updating Kubernetes Cluster --- "
-						sh ""
+						sh ' ---- Updating Kubernetes Cluster --- '
 					}
 				}
 				stage("Removing Docker Image") {
 					steps {
-						sh " ---- Removing Docker Image --- "
-						sh ""
+						sh ' ---- Removing Docker Image --- '
 					}
 				}
 			}
 		}
 		stage("Run Blue Application") {
 			steps {
-				sh " ---- Running Blue Application Container --- "
-				sh ""
+				sh ' ---- Running Blue Application Container --- '
 			}
 		}
 		stage("Get Kubernetes Info") {
 			steps {
-				sh " ---- Getting kubectl Info --- "
-				sh ""
+				sh ' ---- Getting kubectl Info --- '
 			}
 		}
 	}
