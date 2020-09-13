@@ -7,14 +7,12 @@ pipeline {
 				  sh 'tidy -q -e green-app/public/*.html'
               }
          }
-		stage('Build') {
+		stage('Install node packages') {
 			steps {
-				nodejs(nodeJSInstallationName: 'node12.8.3') {
-					sh 'node --version'
-					sh 'npm --version'
-					sh 'cd blue-app/ && npm install'
-					sh 'cd green-app/ && npm install'
-				}
+				sh 'node --version'
+				sh 'npm --version'
+				sh 'cd blue-app/ && npm install'
+				sh 'cd green-app/ && npm install'
 			}
 		}
 		stage('Lint static files') {
