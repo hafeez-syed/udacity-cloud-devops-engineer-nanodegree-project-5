@@ -4,6 +4,7 @@ pipeline {
 	tools { nodejs "NodeJS"	}
 
 	stages {
+		/**
 		stage("Install node packages") {
 			steps {
 				sh " --- Installing Node Packages --- "
@@ -13,6 +14,7 @@ pipeline {
 				sh "cd green-app/ && npm install"
 			}
 		}
+		*/
 		stage("Lint static files") {
 			parallel {
 				stage("Lint Javascript files") {
