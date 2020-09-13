@@ -6,7 +6,6 @@ pipeline {
 	stages {
 		stage("Install node packages") {
 			steps {
-				sh ' --- Installing Node Packages --- '
 				sh '''
 					node --version
 					npm --version
