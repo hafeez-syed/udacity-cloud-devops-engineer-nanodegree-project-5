@@ -2,9 +2,13 @@ pipeline {
 	agent any
 	stages {	
 		stage('Build') {
-			steps('install node packages') {
-				sh 'cd blue-app/ && npm install'
-				sh 'cd green-app/ && npm install'
+			steps {
+				nodejs(nodeJSInstallationName: 'node12.8.3') {
+					sh 'node --version'
+					sh 'npm --version'
+					sh 'cd blue-app/ && npm install'
+					sh 'cd green-app/ && npm install'
+				}
 			}
 		}
 		stage('Lint static files') {
