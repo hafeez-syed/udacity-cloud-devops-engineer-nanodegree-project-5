@@ -9,8 +9,8 @@ pipeline {
 				sh '''
 					node --version
 					npm --version
-					cd blue-app/ && npm install
-					cd green-app/ && npm install
+					cd ./blue-app/ && npm install
+					cd ./green-app/ && npm install
 				'''
 			}
 		}
@@ -19,15 +19,15 @@ pipeline {
 				stage("Lint Javascript files") {
 					steps {
 						sh " --- Running ESlint to check for Javascript Errors --- "
-						sh "cd blue-app/ && npm run lint"
-						sh "cd green-app/ && npm run lint"
+						sh "cd ./blue-app/ && npm run lint"
+						sh "cd ./green-app/ && npm run lint"
 					}
 				}
 				stage("Lint HTML files") {
 					steps {
 						sh " --- Running Tidy to Check for for Javascript Errors --- "
-						sh "tidy -q -e blue-app/public/*.html"
-						sh "tidy -q -e green-app/public/*.html"
+						sh "tidy -q -e ./blue-app/public/*.html"
+						sh "tidy -q -e ./green-app/public/*.html"
 					}
 				}
 			}
