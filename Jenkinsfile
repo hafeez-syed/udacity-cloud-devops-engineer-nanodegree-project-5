@@ -1,6 +1,12 @@
 pipeline {
 	agent any
-	stages {	
+	stages {
+		stage('Lint HTML') {
+              steps {
+				  sh 'tidy -q -e blue-app/public/*.html'
+				  sh 'tidy -q -e green-app/public/*.html'
+              }
+         }
 		stage('Build') {
 			steps {
 				nodejs(nodeJSInstallationName: 'node12.8.3') {
