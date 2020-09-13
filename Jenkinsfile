@@ -4,12 +4,6 @@ pipeline {
 	tools { nodejs 'NodeJS'	}
 
 	stages {
-		stage('Lint HTML') {
-              steps {
-				  sh 'tidy -q -e blue-app/public/*.html'
-				  sh 'tidy -q -e green-app/public/*.html'
-              }
-         }
 		stage('Install node packages') {
 			steps {
 				sh 'node --version'
