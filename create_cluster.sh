@@ -9,5 +9,4 @@ eksctl create cluster \
 --nodes 4 \
 --nodes-min 2 \
 --nodes-max 4 \
---ssh-access \
 --managed
