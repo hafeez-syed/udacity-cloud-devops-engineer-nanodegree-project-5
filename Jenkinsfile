@@ -59,28 +59,27 @@ pipeline {
 		}
 		stage("Docker") {
 			parallel {
-				stage("Build Docker Image") {
-					parallel {
-						stage("Blue Image") {
-							steps {
-								withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-									sh 'echo " ---- Building Blue Image --- "'
-									sh './blue-app/build_docker.sh'
-								}
-							}
-						}
-						stage("Green Image") {
-							steps {
-								withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-									sh 'echo " ---- Building Green Image --- "'
-								}
-							}
+				stage("Build Blue Image") {
+					steps {
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Building Blue Image --- "'
+							sh './blue-app/build_docker.sh'
 						}
 					}
 				}
 				stage("Push Docker Image") {
 					steps {
-						sh 'echo " ---- Pushing Docker Image to the Repository --- "'
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
+							sh './blue-app/upload_docker.sh'
+						}
+					}
+				}
+				stage("Build Green Image") {
+					steps {
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Building Green Image --- "'
+						}
 					}
 				}
 				stage("Removing Docker Image") {
