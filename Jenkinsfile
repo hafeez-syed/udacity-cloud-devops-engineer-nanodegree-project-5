@@ -102,7 +102,7 @@ pipeline {
 				}
 			}
 		}
-		stage("Push Docker Image) {
+		stage("Push Docker Images") {
 			parallel {
 				stage("Push Blue Image") {
 					steps {
@@ -134,7 +134,7 @@ pipeline {
 				}
 			}
 		}
-		stage ("Remove Docker Images) {
+		stage ("Remove Docker Images") {
 			parallel {
 				stage("Remove Blue Image") {
 					steps {
