@@ -195,8 +195,12 @@ pipeline {
 		stage("Get Kubernetes Info") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-					sh 'echo "---- Getting kubectl Info --- "'
+					sh 'echo " ---- Getting kubectl Info --- "'
 				}
+			}
+			steps {
+				sh 'echo " --- Very Blue application is running --- "'
+				sleep time: 1, unit: 'MINUTES'
 			}
 		}
 		stage("Switch to Green Application") {
@@ -205,10 +209,15 @@ pipeline {
 					sh 'echo " ---- Switching Application from Blue to Green --- "'
 				}
 			}
+			steps {
+				sh 'echo " --- Very Green application is running --- "'
+				sleep time: 1, unit: 'MINUTES'
+			}
 		}
 		stage("Clean up") {
 			steps {
 				sh 'echo " ---- Removing unused containers --- "'
+				sh 'docker system prune'
 			}
 		}
 	}
