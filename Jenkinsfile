@@ -63,7 +63,10 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Building Blue Image --- "'
-							sh './blue-app/build_docker.sh'
+							sh '''
+								cd ./blue-app
+								./build_docker.sh
+							'''
 						}
 					}
 				}
@@ -71,7 +74,10 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
-							sh './blue-app/upload_docker.sh'
+							sh '''
+								cd ./blue-app
+								./upload_docker.sh
+							'''
 						}
 					}
 				}
