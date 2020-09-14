@@ -79,11 +79,11 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Building Blue Image --- "'
-							/*sh '''
+							sh '''
 								echo $BUILD_ID
 								cd ./blue-app
 								./build_docker.sh
-							'''*/
+							'''
 						}
 					}
 				}
@@ -91,18 +91,18 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Building Green Image --- "'
-							/*sh '''
+							sh '''
 								echo $BUILD_ID
 								cd ./green-app
 								./build_docker.sh
-							'''*/
+							'''
 						}
 					}
 				}
 				stage("List Images after Building") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
-						/*sh 'docker images'*/
+						sh 'docker images'
 					}
 				}
 			}
@@ -113,10 +113,10 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
-							/*sh '''
+							sh '''
 								cd ./blue-app
 								./upload_docker.sh
-							'''*/
+							'''
 						}
 					}
 				}
@@ -124,17 +124,17 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
-							/*sh '''
+							sh '''
 								cd ./green-app
 								./upload_docker.sh
-							'''*/
+							'''
 						}
 					}
 				}
 				stage("List Images after Pushing to Registry") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
-						/*sh 'docker images'*/
+						sh 'docker images'
 					}
 				}
 			}
@@ -144,25 +144,25 @@ pipeline {
 				stage("Remove Blue Image") {
 					steps {
 						sh 'echo " ---- Removing Blue Image --- "'
-						/*sh '''
+						sh '''
 							cd ./blue-app
 							./remove_docker.sh
-						'''*/
+						'''
 					}
 				}
 				stage("Remove Green Image") {
 					steps {
 						sh 'echo " ---- Removing Green Image --- "'
-						/*sh '''
+						sh '''
 							cd ./green-app
 							./remove_docker.sh
-						'''*/
+						'''
 					}
 				}
 				stage("List Images after Removing") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
-						/*sh 'docker images'*/
+						sh 'docker images'
 					}
 				}
 			}
