@@ -47,17 +47,28 @@ pipeline {
 				}
 			}
 		}
-		stage("Script Permissions") {
+		stage("Adding Script Permissions") {
 			steps {
 				sh 'echo " --- Adding permission to execute the scripts --- "'
 				sh '''
 					cd ./blue-app
 					chmod +x ./build_docker.sh
 					chmod +x ./upload_docker.sh
+					chmod +x ./remove_docker.sh
+					chmod +x ./blue-app.yaml
+					chmod +x ./blue-service.yaml
+				'''
+				sh '''
+					cd ./green-app
+					chmod +x ./build_docker.sh
+					chmod +x ./upload_docker.sh
+					chmod +x ./remove_docker.sh
+					chmod +x ./green-app.yaml
+					chmod +x ./green-service.yaml
 				'''
 			}
 		}
-		stage("Docker") {
+		stage("Build Docker Images") {
 			parallel {
 				stage("Build Blue Image") {
 					steps {
@@ -71,7 +82,27 @@ pipeline {
 						}
 					}
 				}
-				stage("Push Docker Image") {
+				stage("Build Green Image") {
+					steps {
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Building Green Image --- "'
+							sh '''
+								echo $BUILD_ID
+								cd ./green-app
+								./build_docker.sh
+							'''
+						}
+					}
+				}
+				stage("List Images after Building") {
+					sh 'echo " ---- Listing Dockers Images --- "'
+					sh 'docker images'
+				}
+			}
+		}
+		stage("Push Docker Images") {
+			parallel {
+				stage("Push Blue Image") {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
@@ -82,17 +113,46 @@ pipeline {
 						}
 					}
 				}
-				stage("Build Green Image") {
+				stage("Push Green Image") {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-							sh 'echo " ---- Building Green Image --- "'
+							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
+							sh '''
+								cd ./green-app
+								./upload_docker.sh
+							'''
 						}
 					}
 				}
-				stage("Removing Docker Image") {
+				stage("List Images after Pushing to Registry") {
+					sh 'echo " ---- Listing Dockers Images --- "'
+					sh 'docker images'
+				}
+			}
+		}
+		stage("Remove Docker Images") {
+			parallel {
+				stage("Remove Blue Image") {
 					steps {
-						sh 'echo " ---- Removing Docker Image --- "'
+						sh 'echo " ---- Removing Blue Image --- "'
+						sh '''
+							cd ./blue-app
+							./remove_docker.sh
+						'''
 					}
+				}
+				stage("Remove Green Image") {
+					steps {
+						sh 'echo " ---- Removing Green Image --- "'
+						sh '''
+							cd ./green-app
+							./remove_docker.sh
+						'''
+					}
+				}
+				stage("List Images after Deleting") {
+					sh 'echo " ---- Listing Dockers Images --- "'
+					sh 'docker images'
 				}
 			}
 		}
