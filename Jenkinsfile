@@ -183,12 +183,12 @@ pipeline {
 				}
 			}
 		}
-		stage("Blue Application") {
+		stage("Deploy Application Containers") {
 			parallel {
-				stage("Deploy Blue Application") {
+				stage("Deploy Blue Application Container") {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-							sh 'echo " ---- Deploying Blue Application --- "'
+							sh 'echo " ---- Deploying Green Application Container --- "'
 							sh '''
 								cd ./blue-app
 								kubectl apply -f blue-app.yaml
@@ -196,20 +196,31 @@ pipeline {
 						}
 					}
 				}
-				stage("Run Blue Application") {
+				stage("Deploy Green Application Container") {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-							sh 'echo " ---- Running Blue Application --- "'
+							sh 'echo " ---- Deploying Blue Application Container --- "'
 							sh '''
-								cd ./blue-app
-								kubectl apply -f blue-service.yaml
+								cd ./green-app
+								kubectl apply -f green-app.yaml
 							'''
 						}
 					}
 				}
 			}
 		}
-		stage("Get Kubernetes Info") {
+		stage("Run Blue Application") {
+			steps {
+				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+					sh 'echo " ---- Running Blue Application --- "'
+					sh '''
+						cd ./blue-app
+						kubectl apply -f blue-service.yaml
+					'''
+				}
+			}
+		}
+		stage("K8s Info: After Deployment") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Getting kubectl Info --- "'
@@ -232,7 +243,7 @@ pipeline {
 				}
 			}
 		}
-		stage("Get Kubernetes Info") {
+		stage("K8s Info: After Switching to Green Application") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Getting kubectl Info --- "'
