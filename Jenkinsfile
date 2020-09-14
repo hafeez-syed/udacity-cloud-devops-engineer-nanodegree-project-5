@@ -50,13 +50,32 @@ pipeline {
 		stage("Script Permissions") {
 			steps {
 				sh 'echo " --- Adding permission to execute the scripts --- "'
+				sh '''
+					cd ./blue-app
+					chmod +x ./build_docker.sh
+					chmod +x ./upload_docker.sh
+				'''
 			}
 		}
 		stage("Docker") {
 			parallel {
 				stage("Build Docker Image") {
-					steps {
-						sh 'echo " ---- Building Docker Image --- "'
+					parallel {
+						stage("Blue Image") {
+							steps {
+								withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+									sh 'echo " ---- Building Blue Image --- "'
+									sh './blue-app/build_docker.sh'
+								}
+							}
+						}
+						stage("Green Image") {
+							steps {
+								withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+									sh 'echo " ---- Building Green Image --- "'
+								}
+							}
+						}
 					}
 				}
 				stage("Push Docker Image") {
@@ -71,21 +90,20 @@ pipeline {
 				}
 			}
 		}
-		stage("Kubernetes Cluster in AWS") {
+		stage("Kubernetes Cluster in AWS EKS") {
 			parallel {
 				stage("Create K8s Cluster") {
 					steps {
-						sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
+						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+							sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
+						}
 					}
 				}
 				stage("Update K8s Cluster Configuration") {
 					steps {
-						sh 'echo " ---- Updating Kubernetes Cluster --- "'
-					}
-				}
-				stage("Removing Docker Image") {
-					steps {
-						sh 'echo " ---- Removing Docker Image --- "'
+						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+							sh 'echo " ---- Updating Kubernetes Cluster Config --- "'
+						}
 					}
 				}
 			}
@@ -98,6 +116,11 @@ pipeline {
 		stage("Get Kubernetes Info") {
 			steps {
 				sh 'echo "---- Getting kubectl Info --- "'
+			}
+		}
+		stage("Switch to Green Application") {
+			steps {
+				sh 'echo " ---- Switching Application from Blue to Green --- echo "'
 			}
 		}
 	}
