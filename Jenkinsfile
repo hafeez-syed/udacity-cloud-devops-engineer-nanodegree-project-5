@@ -99,12 +99,12 @@ pipeline {
 						}
 					}
 				}
-				stage("List Images after Building") {
-					steps {
-						sh 'echo " ---- Listing Dockers Images --- "'
-						sh 'docker images'
-					}
-				}
+			}
+		}
+		stage("List Images after Building") {
+			steps {
+				sh 'echo " ---- Listing Dockers Images --- "'
+				sh 'docker images'
 			}
 		}
 		stage("Push Docker Images") {
@@ -131,12 +131,12 @@ pipeline {
 						}
 					}
 				}
-				stage("List Images after Pushing to Registry") {
-					steps {
-						sh 'echo " ---- Listing Dockers Images --- "'
-						sh 'docker images'
-					}
-				}
+			}
+		}
+		stage("List Images after Pushing to Registry") {
+			steps {
+				sh 'echo " ---- Listing Dockers Images --- "'
+				sh 'docker images'
 			}
 		}
 		stage ("Remove Docker Images") {
@@ -159,31 +159,27 @@ pipeline {
 						'''
 					}
 				}
-				stage("List Images after Removing") {
-					steps {
-						sh 'echo " ---- Listing Dockers Images --- "'
-						sh 'docker images'
-					}
+			}
+		}
+		stage("Confirm Docker Images are removed") {
+			steps {
+				sh 'echo " ---- Listing Dockers Images --- "'
+				sh 'docker images'
+			}
+		}
+		stage("Create Kubernetes Cluster in AWS EKS") {
+			steps {
+				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+					sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
+					sh './create_cluster.sh'
 				}
 			}
 		}
-		stage("Kubernetes Cluster in AWS EKS") {
-			parallel {
-				stage("Create K8s Cluster") {
-					steps {
-						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-							sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
-							sh './create_cluster.sh'
-						}
-					}
-				}
-				stage("Update K8s Cluster Configuration") {
-					steps {
-						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-							sh 'echo " ---- Updating Kubernetes Cluster Config --- "'
-							sh './create_k8s-config.sh'
-						}
-					}
+		stage("Update K8s Cluster Configuration") {
+			steps {
+				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+					sh 'echo " ---- Updating Kubernetes Cluster Config --- "'
+					sh './create_k8s-config.sh'
 				}
 			}
 		}
@@ -233,6 +229,14 @@ pipeline {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Switching Application from Blue to Green --- "'
 					sh './switch-to-green-app.sh'
+				}
+			}
+		}
+		stage("Get Kubernetes Info") {
+			steps {
+				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+					sh 'echo " ---- Getting kubectl Info --- "'
+					sh 'kubectl get nodes,deploy,svc,pod'
 				}
 			}
 		}
