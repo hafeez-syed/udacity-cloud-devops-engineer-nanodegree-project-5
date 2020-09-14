@@ -173,7 +173,7 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
-							/*sh './create_cluster.sh'*/
+							sh './create_cluster.sh'
 						}
 					}
 				}
@@ -181,7 +181,7 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Updating Kubernetes Cluster Config --- "'
-							/*sh './create_k8s-config.sh'*/
+							sh './create_k8s-config.sh'
 						}
 					}
 				}
@@ -193,10 +193,10 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Deploying Blue Application --- "'
-							/*sh '''
+							sh '''
 								cd ./blue-app
 								kubectl apply -f blue-app.yaml
-							'''*/
+							'''
 						}
 					}
 				}
@@ -204,10 +204,10 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Running Blue Application --- "'
-							/*sh '''
+							sh '''
 								cd ./blue-app
 								kubectl apply -f blue-service.yaml
-							'''*/
+							'''
 						}
 					}
 				}
@@ -217,36 +217,36 @@ pipeline {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Getting kubectl Info --- "'
-					/*sh 'kubectl get nodes,deploy,svc,pod'*/
+					sh 'kubectl get nodes,deploy,svc,pod'
 				}
 			}
 		}
 		stage("Verify Blue Application") {
 			steps {
 				sh 'echo " --- Very Blue application is running --- "'
-				/*sh 'kubectl get service -o wide'
-				sleep time: 1, unit: 'MINUTES'*/
+				sh 'kubectl get service -o wide'
+				sleep time: 2, unit: 'MINUTES'
 			}
 		}
 		stage("Switch to Green Application") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Switching Application from Blue to Green --- "'
-					/*sh './switch-to-green-app.sh'*/
+					sh './switch-to-green-app.sh'
 				}
 			}
 		}
 		stage("Verify Green Application") {
 			steps {
 				sh 'echo " --- Very Green application is running --- "'
-				/*sh 'kubectl get service -o wide'
-				sleep time: 1, unit: 'MINUTES'*/
+				sh 'kubectl get service -o wide'
+				sleep time: 2, unit: 'MINUTES'
 			}
 		}
 		stage("Clean up") {
 			steps {
 				sh 'echo " ---- Removing unused containers --- "'
-				/* sh 'docker system prune' */
+				sh 'docker system prune'
 			}
 		}
 	}
