@@ -263,7 +263,7 @@ pipeline {
 						}
 					}
 				}
-				stage("Cleanup Docker") {
+				stage("Cleanup K8S") {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Deleting Kubernetes Cluster --- "'
