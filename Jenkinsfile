@@ -95,8 +95,10 @@ pipeline {
 					}
 				}
 				stage("List Images after Building") {
-					sh 'echo " ---- Listing Dockers Images --- "'
-					sh 'docker images'
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
 				}
 			}
 		}
@@ -125,8 +127,10 @@ pipeline {
 					}
 				}
 				stage("List Images after Pushing to Registry") {
-					sh 'echo " ---- Listing Dockers Images --- "'
-					sh 'docker images'
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
 				}
 			}
 		}
@@ -151,8 +155,10 @@ pipeline {
 					}
 				}
 				stage("List Images after Deleting") {
-					sh 'echo " ---- Listing Dockers Images --- "'
-					sh 'docker images'
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
 				}
 			}
 		}
