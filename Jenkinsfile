@@ -134,7 +134,7 @@ pipeline {
 				stage("List Images after Pushing to Registry") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
-						sh 'docker images'
+						/*sh 'docker images'*/
 					}
 				}
 			}
@@ -162,7 +162,7 @@ pipeline {
 				stage("List Images after Removing") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
-						sh 'docker images'
+						/*sh 'docker images'*/
 					}
 				}
 			}
@@ -173,6 +173,7 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Creating Kubernetes Cluster in AWS --- "'
+							/*sh './create_cluster.sh'*/
 						}
 					}
 				}
@@ -180,15 +181,35 @@ pipeline {
 					steps {
 						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 							sh 'echo " ---- Updating Kubernetes Cluster Config --- "'
+							/*sh './create_k8s-config.sh'*/
 						}
 					}
 				}
 			}
 		}
-		stage("Run Blue Application") {
-			steps {
-				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-					sh 'echo " ---- Running Blue Application Container --- "'
+		stage("Blue Application") {
+			parallel {
+				stage("Deploy Blue Application") {
+					steps {
+						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+							sh 'echo " ---- Deploying Blue Application --- "'
+							/*sh '''
+								cd ./blue-app
+								kubectl apply -f blue-app.yaml
+							'''*/
+						}
+					}
+				}
+				stage("Run Blue Application") {
+					steps {
+						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+							sh 'echo " ---- Running Blue Application --- "'
+							/*sh '''
+								cd ./blue-app
+								kubectl apply -f blue-service.yaml
+							'''*/
+						}
+					}
 				}
 			}
 		}
@@ -196,26 +217,30 @@ pipeline {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Getting kubectl Info --- "'
+					/*sh 'kubectl get nodes,deploy,svc,pod'*/
 				}
 			}
 		}
 		stage("Verify Blue Application") {
 			steps {
 				sh 'echo " --- Very Blue application is running --- "'
-				sleep time: 1, unit: 'MINUTES'
+				/*sh 'kubectl get service -o wide'
+				sleep time: 1, unit: 'MINUTES'*/
 			}
 		}
 		stage("Switch to Green Application") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " ---- Switching Application from Blue to Green --- "'
+					/*sh './switch-to-green-app.sh'*/
 				}
 			}
 		}
 		stage("Verify Green Application") {
 			steps {
 				sh 'echo " --- Very Green application is running --- "'
-				sleep time: 1, unit: 'MINUTES'
+				/*sh 'kubectl get service -o wide'
+				sleep time: 1, unit: 'MINUTES'*/
 			}
 		}
 		stage("Clean up") {
