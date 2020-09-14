@@ -198,6 +198,8 @@ pipeline {
 					sh 'echo " ---- Getting kubectl Info --- "'
 				}
 			}
+		}
+		stage("Verify Blue Application") {
 			steps {
 				sh 'echo " --- Very Blue application is running --- "'
 				sleep time: 1, unit: 'MINUTES'
@@ -209,6 +211,8 @@ pipeline {
 					sh 'echo " ---- Switching Application from Blue to Green --- "'
 				}
 			}
+		}
+		stage("Verify Green Application") {
 			steps {
 				sh 'echo " --- Very Green application is running --- "'
 				sleep time: 1, unit: 'MINUTES'
