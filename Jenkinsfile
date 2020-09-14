@@ -229,7 +229,6 @@ pipeline {
 					sh 'kubectl get nodes,deploy,svc,pod'
 					sh 'kubectl get service -o wide'
 					sh 'echo " --- Copy URL and test the application in the browser --- "'
-					sleep time: 2, unit: 'MINUTES'
 				}
 			}
 		}
@@ -245,11 +244,10 @@ pipeline {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " --- Very Green application is running --- "'
-					sleep time: 2, unit: 'MINUTES'
+					sleep time: 1, unit: 'MINUTES'
 					sh 'kubectl get nodes,deploy,svc,pod'
 					sh 'kubectl get service -o wide'
 					sh 'echo " --- Copy URL and test the application in the browser --- "'
-					sleep time: 2, unit: 'MINUTES'
 				}
 			}
 		}
@@ -259,7 +257,7 @@ pipeline {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Removing unused containers --- "'
-							sh 'docker system prune'
+							sh 'docker system prune -f'
 						}
 					}
 				}
