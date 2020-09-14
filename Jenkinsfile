@@ -64,6 +64,7 @@ pipeline {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
 							sh 'echo " ---- Building Blue Image --- "'
 							sh '''
+								echo $BUILD_ID
 								cd ./blue-app
 								./build_docker.sh
 							'''

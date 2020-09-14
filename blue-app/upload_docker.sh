@@ -15,4 +15,4 @@ docker tag capstone-docker-image-blue $dockerpath
 
 # Step 3:
 # Push image to a docker repository
-docker push $dockerpath
+docker push $dockerpath:latest
