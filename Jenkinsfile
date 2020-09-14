@@ -68,7 +68,7 @@ pipeline {
 				'''
 			}
 		}
-		stage("Build Docker Images") {
+		stage("Blue Docker Image") {
 			parallel {
 				stage("Build Blue Image") {
 					steps {
@@ -82,6 +82,49 @@ pipeline {
 						}
 					}
 				}
+				stage("List Images after Building") {
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
+				}
+				stage("Push Blue Image") {
+					steps {
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
+							sh '''
+								cd ./blue-app
+								./upload_docker.sh
+							'''
+						}
+					}
+				}
+				stage("List Images after Pushing to Registry") {
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
+				}
+				stage("Remove Blue Image") {
+					steps {
+						sh 'echo " ---- Removing Blue Image --- "'
+						sh '''
+							cd ./blue-app
+							./remove_docker.sh
+						'''
+					}
+				}
+				stage("List Images after Removing") {
+					steps {
+						sh 'echo " ---- Listing Dockers Images --- "'
+						sh 'docker images'
+					}
+				}
+			}
+		}
+		/**
+		stage("Green Docker Image) {
+			parallel {
 				stage("Build Green Image") {
 					steps {
 						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
@@ -98,21 +141,6 @@ pipeline {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
 						sh 'docker images'
-					}
-				}
-			}
-		}
-		stage("Push Docker Images") {
-			parallel {
-				stage("Push Blue Image") {
-					steps {
-						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
-							sh 'echo " ---- Pushing Docker Image to the Repository --- "'
-							sh '''
-								cd ./blue-app
-								./upload_docker.sh
-							'''
-						}
 					}
 				}
 				stage("Push Green Image") {
@@ -132,19 +160,6 @@ pipeline {
 						sh 'docker images'
 					}
 				}
-			}
-		}
-		stage("Remove Docker Images") {
-			parallel {
-				stage("Remove Blue Image") {
-					steps {
-						sh 'echo " ---- Removing Blue Image --- "'
-						sh '''
-							cd ./blue-app
-							./remove_docker.sh
-						'''
-					}
-				}
 				stage("Remove Green Image") {
 					steps {
 						sh 'echo " ---- Removing Green Image --- "'
@@ -154,7 +169,7 @@ pipeline {
 						'''
 					}
 				}
-				stage("List Images after Deleting") {
+				stage("List Images after Removing") {
 					steps {
 						sh 'echo " ---- Listing Dockers Images --- "'
 						sh 'docker images'
@@ -162,6 +177,7 @@ pipeline {
 				}
 			}
 		}
+		*/
 		stage("Kubernetes Cluster in AWS EKS") {
 			parallel {
 				stage("Create K8s Cluster") {
