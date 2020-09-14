@@ -52,6 +52,7 @@ pipeline {
 				sh 'echo " --- Adding permission to execute the scripts --- "'
 				sh '''
 					chmod +x ./create_cluster.sh
+					chmod +x ./remove_cluster.sh
 					chmod +x ./create_k8s-config.sh
 					chmod +x ./switch-to-green-app.sh
 				'''
@@ -220,19 +221,16 @@ pipeline {
 				}
 			}
 		}
-		stage("K8s Info: After Deployment") {
+		stage("K8s: Verify Blue Application") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-					sh 'echo " ---- Getting kubectl Info --- "'
+					sh 'echo " --- Very Blue application is running --- "'
+					sleep time: 2, unit: 'MINUTES'
 					sh 'kubectl get nodes,deploy,svc,pod'
+					sh 'kubectl get service -o wide'
+					sh 'echo " --- Copy URL and test the application in the browser --- "'
+					sleep time: 2, unit: 'MINUTES'
 				}
-			}
-		}
-		stage("Verify Blue Application") {
-			steps {
-				sh 'echo " --- Very Blue application is running --- "'
-				sh 'kubectl get service -o wide'
-				sleep time: 2, unit: 'MINUTES'
 			}
 		}
 		stage("Switch to Green Application") {
@@ -243,25 +241,36 @@ pipeline {
 				}
 			}
 		}
-		stage("K8s Info: After Switching to Green Application") {
+		stage("K8s: Verify Green Application") {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
-					sh 'echo " ---- Getting kubectl Info --- "'
+					sh 'echo " --- Very Green application is running --- "'
+					sleep time: 2, unit: 'MINUTES'
 					sh 'kubectl get nodes,deploy,svc,pod'
+					sh 'kubectl get service -o wide'
+					sh 'echo " --- Copy URL and test the application in the browser --- "'
+					sleep time: 2, unit: 'MINUTES'
 				}
 			}
 		}
-		stage("Verify Green Application") {
-			steps {
-				sh 'echo " --- Very Green application is running --- "'
-				sh 'kubectl get service -o wide'
-				sleep time: 2, unit: 'MINUTES'
-			}
-		}
 		stage("Clean up") {
-			steps {
-				sh 'echo " ---- Removing unused containers --- "'
-				sh 'docker system prune'
+			parallel {
+				stage("Cleanup Docker") {
+					steps {
+						withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD']]) {
+							sh 'echo " ---- Removing unused containers --- "'
+							sh 'docker system prune'
+						}
+					}
+				}
+				stage("Cleanup Docker") {
+					steps {
+						withAWS(region:'ap-southeast-2',credentials:'aws-static') {
+							sh 'echo " ---- Deleting Kubernetes Cluster --- "'
+							sh './remove_cluster.sh'
+						}
+					}
+				}
 			}
 		}
 	}

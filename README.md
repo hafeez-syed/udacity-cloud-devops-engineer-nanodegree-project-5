@@ -11,7 +11,7 @@ $ eksctl create cluster --config-file cluster-node-group-lt.yaml
 
 ### delete cluster
 ```
-$ eksctl delete cluster --region=ap-southeast-2 --name=udacity-capstone-project
+$ eksctl delete cluster --region=ap-southeast-2 --name=udacity-capstone
 ```
 
 ## Docker
