@@ -1,5 +1,4 @@
-# udacity-cloud-devops-engineer-nanodegree-project-5
-Capstone project - Udacity Cloud DevOps NanoDegree
+# Capstone Project - Udacity Cloud Devops Engineer Nanodegree
 
 <hr />
 
@@ -7,7 +6,19 @@ In this project, we will create 2 applications i.e Blue and Green running inside
 
 <hr />
 
-![](https://github.com/hafeez-syed/pipeline.png)
+## This project contains all necessary contents mentioned in the ruberic
+
++ [Project code in Github](https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5)
++ [Image repository link with screenshot](https://hub.docker.com/search?q=feeziman007&type=image)
++ Linter step is defined as part of CI process with screenshots
++ Docker files are present to create Docker containers in the pipeline
++ Files to create Docker container deployments to Kubernetes cluster
++ Blue / Green application
++ All the necessary screenshots
+
+<hr />
+
+![](https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5/blob/master/screenshots/jenkins-pipeline.png)
 
 <hr />
 
@@ -78,8 +89,12 @@ Following will be performed inside the AWS EC2 instance running the Jenkins pipe
 
 <hr />
 
-![](https://github.com/hafeez-syed/blue.png)
+## Blue Application
+
+![](https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5/blob/master/screenshots/7-Blue-Green-Apps/1.png)
 
 <hr />
 
-![](https://github.com/hafeez-syed/green.png)
+## Green Application
+
+![](https://github.com/hafeez-syed/udacity-cloud-devops-engineer-nanodegree-project-5/blob/master/screenshots/7-Blue-Green-Apps/2.png)

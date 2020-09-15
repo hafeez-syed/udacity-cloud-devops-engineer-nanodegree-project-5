@@ -225,10 +225,11 @@ pipeline {
 			steps {
 				withAWS(region:'ap-southeast-2',credentials:'aws-static') {
 					sh 'echo " --- Very Blue application is running --- "'
-					sleep time: 2, unit: 'MINUTES'
+					sleep time: 1, unit: 'MINUTES'
 					sh 'kubectl get nodes,deploy,svc,pod'
 					sh 'kubectl get service -o wide'
 					sh 'echo " --- Copy URL and test the application in the browser --- "'
+					sleep time: 1, unit: 'MINUTES'
 				}
 			}
 		}
