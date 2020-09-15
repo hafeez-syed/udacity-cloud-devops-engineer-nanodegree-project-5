@@ -1,64 +1,85 @@
 # udacity-cloud-devops-engineer-nanodegree-project-5
 Capstone project - Udacity Cloud DevOps NanoDegree
 
-### eksctl documentation
-https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
+<hr />
 
-### create cluster
-```
-$ eksctl create cluster --config-file cluster-node-group-lt.yaml
+In this project, we will create 2 applications i.e Blue and Green running inside the docker containers and deploying them to the Kubernetes Cluster. Later we will switch BLUE application to the GREEN in the cluster.
+
+<hr />
+
+![](https://github.com/hafeez-syed/pipeline.png)
+
+<hr />
+
+Following will be performed inside the AWS EC2 instance running the Jenkins pipeline
+
+## NodeJS and NPM
+
+```bash
+ - View Nodejs version
+ - View NPM version
 ```
 
-### delete cluster
+## Install NodeJS packages
+
+```bash
+ - Install node packages for Blue application
+ - Install node packages for Green application
 ```
-$ eksctl delete cluster --region=ap-southeast-2 --name=udacity-capstone
+
+## Lint static files
+
+```bash
+ - Lint HTML files
+ - Lint Javascript files
+```
+
+## Adding permissions
+
+```bash
+ - Assign execution permission to all scripts and templates
 ```
 
 ## Docker
-```bash
-$ docker build -t capstone-docker-image .
-```
 
 ```bash
-$ docker run -d -p 3000:3000 --name capstone-docker-container capstone-docker-image
+ - Build docker images in the system
+    - Build blue image
+    - Build green image
+
+ - Push docker images to the registry
+    - Push blue image
+    - Push green image
+
+ - Delete docker images from the system
+    - Push blue image
+    - Push green image
 ```
+
+## Kuberbetes (K8s)
 
 ```bash
-$ docker exec -it capstone-docker-container /bin/sh
+ - Create Kubernetes Cluster in AWS using eksctl
+ - Update Cluster configuration
+ - Deploy Blue Application
+ - Deploy Green Application
+ - Run Blue Application service
+ - Verify Blue service is running
+ - Switch to Green Application service
+ - Verify Blue Application has been replaced with Green Application
 ```
+
+## Clenup
 
 ```bash
-$ minikube start
+ - Delete an unused docker data in the system
+ - Delete Kubernetes Cluster
 ```
 
-```bash
-$ kubectl apply -f <deployment-template>.yaml
-```
+<hr />
 
-## K8s
+![](https://github.com/hafeez-syed/blue.png)
 
-Minikube dashboard
+<hr />
 
-```bash
-$ minikube dashboard
-```
-
-Once both `BLUE` and `GREEN` services are running, switch to `GREEN` service
-```bash
-$ kubectl rollout status deploy green-deployment -w
-```
-
-Send all your traffic from v1 `BLUE` to v2 `GREEN`
-```bash
-$ kubectl patch service blue-service -p '{"spec":{"selector":{"version":"v2.0.0"}}}'
-```
-
-If you want to switch back to v1 `BLUE`
-```bash
-$ kubectl patch service blue-service -p '{"spec":{"selector":{"version":"v1.0.0"}}}'
-```
-
-Delete your deployment
-```bash
-$ kubectl delete all -l app=udacity-capstone-project
-```
+![](https://github.com/hafeez-syed/green.png)

@@ -1,4 +1,0 @@
-@Library('mofo') _
-
-// package name, hasLint, hasTests, hasBuild, publishFolder, slack channel
-publishUdacityModule('udacity-capstone', true, true, true, './dist', '#frontend')
